@@ -51,5 +51,7 @@ Page 06 - ( last page, for now )
 ![image](https://user-images.githubusercontent.com/36286877/123755048-27132100-d8d9-11eb-9911-cb9b2abf65c5.png)
 
 
+# :) 
+![win11setup](https://user-images.githubusercontent.com/36286877/127767591-1ee427a9-6aa4-4c47-9d15-454bfcf51a9a.png)
 
 
