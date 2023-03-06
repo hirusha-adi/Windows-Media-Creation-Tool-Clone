@@ -1,26 +1,6 @@
 # windows-11-setup-virus
 
-this skid batch code could harm your computer to some extent
-
-I tried as hard as i can to clone the Windows 10 Download tool ( downloaded from: https://www.microsoft.com/en-us/software-download/windows10 ) with Python and Tkinter. The GUI iteself is not dangerous at all! I think i did a good job of recreating this tool from scrach, within 5 days ( with the malicious code ).
-
-# Malicious Code
-EVERY THING IS DONE WITH THE malicious_code_file.py. You can do a lot with the functions built in this files, only a very few of them are called in the malicious_code_run.py ( this is the file you have to run to start the code )
-
-Every function in "malicious_code_file.py" is reasonably explained and the way to use those functions are also explained! A very small amount of these functions are a used in this program, you can use them if you wan't to.
-
-# NOTE
-I am not responsible for anything done with this!
-
-# How to make an .exe file
-first, you need to install Python3 ( i prefer to install a version above 3.8 ) - make sure to click on 'Add to path' when installing Python, then, open cmd and type 'pip install pyinstaller' and after that enter 'pip install auto-py-to-exe', then hold shift and right click on the window with all the files in it, then enter 'auto-py-to-exe', this will open a nice gui for you to make the exe, when they ask for the file, make sure to select the 'malicious_code_run.py' file.. ( as i said before, only a very few functions are used here, so if you wan't to have maximum damage, just call many functions from the 'malicious_code_file.py' file )
-
-
-As this is "Windows 11 Setup", i am pretty sure that many people will open this program as admin.
-
-# Functions in the malicious_code_file.py
-DISABLE_ACCESS_TO_POPULAR_SITES, RENAME_MULTIPLE_FILES_IN_GIVEN_PATH, FORK_BOMB_NO_WINDOW, START_AGAIN_AFTER_RESTART, FORK_BOMB_WITH_WEBSITE, DELETE_KEY_REGISTRY_FILES, FORK_BOMB_WITH_NOTEPAD, FORK_BOMB_MANY_SOFTWARE_AT_ONCE, FOLDER_FLOODER, USER_ACCOUNTS_FLOODER, PROCESS_CREATOR, DELETE_C_DRIVE, DELETE_ANTIVIRUS_SOFTWARE, ZIPLINE, FILEGROUND_WORM, IP_CONFIG_RELEASE, CRASH_PC_FOREVER, CAUSE_BSOD, SET_FLASHING_SCREEN, MATRIX, CHANGE_TIME_TO_MIDNIGHT, CHANGE_PASS_TO_INSHADOW, HIDE_MY_MUSIC_FOLDER, DELETE_MY_DOCUMENTS, DELETE_MY_PICTURES, DISABLE_FIREWALL_TEMP, INFECT_BATCH_FILES, HIDE_FOLDER, DELETE_FILES_IN_FOLDER, INFECT_ANY_FILE, NOTIFY_USER_ANY, NOTIFY_USER_UNLIMITED, 
-
+bad code, im rewriting my old project
 
 # Images
 Page 01 -
