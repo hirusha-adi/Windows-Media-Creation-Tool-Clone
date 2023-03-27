@@ -5,7 +5,18 @@ import tkinter as tk
 import tkinter.ttk as ttk
 py3 = True
 
-import fifth_page_support
+def init(top, gui, *args, **kwargs):
+    global w, top_level, root
+    w = gui
+    top_level = top
+    root = top
+
+def destroy_window():
+    # Function which closes the window.
+    global top_level
+    top_level.destroy()
+    top_level = None
+    
 import time
 import fourth_page
 import last_page
@@ -16,7 +27,7 @@ def vp_start_gui_fifth():
     global val, w, root
     root = tk.Tk()
     top = Windows_11_Setup (root)
-    fifth_page_support.init(root, top)
+    init(root, top)
     root.mainloop()
 
 w = None
@@ -28,7 +39,7 @@ def create_Windows_11_Setup(rt, *args, **kwargs):
     root = rt
     w = tk.Toplevel (root)
     top = Windows_11_Setup (w)
-    fifth_page_support.init(w, top, *args, **kwargs)
+    init(w, top, *args, **kwargs)
     return (w, top)
 
 def destroy_Windows_11_Setup():

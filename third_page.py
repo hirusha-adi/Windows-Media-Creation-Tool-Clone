@@ -5,7 +5,21 @@ import tkinter as tk
 import tkinter.ttk as ttk
 py3 = True
 
-import third_page_support
+def set_Tk_var():
+    global selectedButton
+    selectedButton = tk.IntVar()
+
+def init(top, gui, *args, **kwargs):
+    global w, top_level, root
+    w = gui
+    top_level = top
+    root = top
+
+def destroy_window():
+    # Function which closes the window.
+    global top_level
+    top_level.destroy()
+    top_level = None
 
 import second_page
 import fourth_page
@@ -14,9 +28,9 @@ def vp_start_gui_third():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
-    third_page_support.set_Tk_var()
+    set_Tk_var()
     top = Windows_11_Setup (root)
-    third_page_support.init(root, top)
+    init(root, top)
     root.mainloop()
 
 w = None
@@ -27,9 +41,9 @@ def create_Windows_11_Setup(rt, *args, **kwargs):
     #rt = root
     root = rt
     w = tk.Toplevel (root)
-    third_page_support.set_Tk_var()
+    set_Tk_var()
     top = Windows_11_Setup (w)
-    third_page_support.init(w, top, *args, **kwargs)
+    init(w, top, *args, **kwargs)
     return (w, top)
 
 def destroy_Windows_11_Setup():
@@ -145,7 +159,7 @@ class Windows_11_Setup:
         self.next_btn.configure(text='''Next''')
         self.next_btn.configure(command=go_to_fourth_page)
 
-        third_page_support.selectedButton.set("3")
+        selectedButton.set("3")
 
         self.Radiobutton1 = tk.Radiobutton(top)
         self.Radiobutton1.place(relx=0.064, rely=0.145, relheight=0.052
@@ -161,7 +175,7 @@ class Windows_11_Setup:
         self.Radiobutton1.configure(highlightcolor="black")
         self.Radiobutton1.configure(justify='left')
         self.Radiobutton1.configure(text='''Keep personal files and apps''')
-        self.Radiobutton1.configure(variable=third_page_support.selectedButton)
+        self.Radiobutton1.configure(variable=selectedButton)
         self.Radiobutton1.configure(value=1)
 
         self.Radiobutton1_1 = tk.Radiobutton(top)
@@ -178,7 +192,7 @@ class Windows_11_Setup:
         self.Radiobutton1_1.configure(highlightcolor="black")
         self.Radiobutton1_1.configure(justify='left')
         self.Radiobutton1_1.configure(text='''Keep personal files only''')
-        self.Radiobutton1_1.configure(variable=third_page_support.selectedButton)
+        self.Radiobutton1_1.configure(variable=selectedButton)
         self.Radiobutton1_1.configure(value=2)
 
         self.Radiobutton1_1_1 = tk.Radiobutton(top)
@@ -195,7 +209,7 @@ class Windows_11_Setup:
         self.Radiobutton1_1_1.configure(highlightcolor="black")
         self.Radiobutton1_1_1.configure(justify='left')
         self.Radiobutton1_1_1.configure(text='''Nothing''')
-        self.Radiobutton1_1_1.configure(variable=third_page_support.selectedButton)
+        self.Radiobutton1_1_1.configure(variable=selectedButton)
         self.Radiobutton1_1_1.configure(value=3)
 
         self.Label1 = tk.Label(top)
