@@ -5,7 +5,21 @@ import tkinter as tk
 import tkinter.ttk as ttk
 py3 = True
 
-import first_page_support
+def set_Tk_var():
+    global selectedButton
+    selectedButton = tk.IntVar()
+
+def init(top, gui, *args, **kwargs):
+    global w, top_level, root
+    w = gui
+    top_level = top
+    root = top
+
+def destroy_window():
+    # Function which closes the window.
+    global top_level
+    top_level.destroy()
+    top_level = None
 
 import second_page
 
@@ -13,9 +27,9 @@ def vp_start_gui():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
-    first_page_support.set_Tk_var()
+    set_Tk_var()
     top = Windows_11_Setup (root)
-    first_page_support.init(root, top)
+    init(root, top)
     root.mainloop()
 
 w = None
@@ -26,9 +40,9 @@ def create_Windows_11_Setup(rt, *args, **kwargs):
     #rt = root
     root = rt
     w = tk.Toplevel (root)
-    first_page_support.set_Tk_var()
+    set_Tk_var()
     top = Windows_11_Setup (w)
-    first_page_support.init(w, top, *args, **kwargs)
+    init(w, top, *args, **kwargs)
     return (w, top)
 
 def destroy_Windows_11_Setup():
@@ -72,7 +86,7 @@ class Windows_11_Setup:
         self.menubar = tk.Menu(top,font="TkMenuFont",bg=_bgcolor,fg=_fgcolor)
         top.configure(menu = self.menubar)
 
-        first_page_support.selectedButton.set("2")
+        selectedButton.set("2")
 
         self.UpgradePCnow = tk.Radiobutton(top)
         self.UpgradePCnow.place(relx=0.048, rely=0.14, relheight=0.05
@@ -88,7 +102,7 @@ class Windows_11_Setup:
         self.UpgradePCnow.configure(highlightcolor="#c1c1c1")
         self.UpgradePCnow.configure(justify='left')
         self.UpgradePCnow.configure(text='''Upgrade this PC now''')
-        self.UpgradePCnow.configure(variable=first_page_support.selectedButton)
+        self.UpgradePCnow.configure(variable=selectedButton)
         self.UpgradePCnow.configure(value=1)
 
         self.createISO = tk.Radiobutton(top)
@@ -105,7 +119,7 @@ class Windows_11_Setup:
         self.createISO.configure(highlightcolor="#c1c1c1")
         self.createISO.configure(justify='left')
         self.createISO.configure(text='''Create installation media for another PC''')
-        self.createISO.configure(variable=first_page_support.selectedButton)
+        self.createISO.configure(variable=selectedButton)
         self.createISO.configure(value=2)
 
         self.ms_label = tk.Label(top)
