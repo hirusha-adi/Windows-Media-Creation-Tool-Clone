@@ -23,7 +23,7 @@ def destroy_window():
 
 import pages.two as second_page
 
-def vp_start_gui():
+def startGUI():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
@@ -192,11 +192,3 @@ class Windows_11_Setup:
         self.next_btn.configure(pady="0")
         self.next_btn.configure(text='''Next''')
         self.next_btn.configure(command=go_to_second_page)
-
-if __name__ == '__main__':
-    vp_start_gui()
-
-
-
-
-
