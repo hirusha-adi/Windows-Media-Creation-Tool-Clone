@@ -1,9 +1,8 @@
-
-import sys
-
 import tkinter as tk
-import tkinter.ttk as ttk
-py3 = True
+
+import pages.five as fifth_page
+import pages.three as third_page
+
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
@@ -11,49 +10,36 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
 
-def destroy_window():
-    # Function which closes the window.
-    global top_level
-    top_level.destroy()
-    top_level = None
-
-import pages.three as third_page
-import pages.five as fifth_page
 
 def vp_start_gui_fourth():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
-    top = Windows_11_Setup (root)
+    top = Windows_11_Setup(root)
     init(root, top)
     root.mainloop()
 
+
 w = None
+
+
 def create_Windows_11_Setup(rt, *args, **kwargs):
     '''Starting point when module is imported by another module.
        Correct form of call: 'create_Windows_11_Setup(root, *args, **kwargs)' .'''
     global w, w_win, root
-    #rt = root
     root = rt
-    w = tk.Toplevel (root)
-    top = Windows_11_Setup (w)
+    w = tk.Toplevel(root)
+    top = Windows_11_Setup(w)
     init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_Windows_11_Setup():
-    global w
-    w.destroy()
-    w = None
 
 class Windows_11_Setup:
-    def __init__(self, top=None):
+    def __init__(self, top: tk.Tk = None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85'
-        _ana2color = '#ececec' # Closest X11 color: 'gray92'
 
         top.geometry("623x482+758+244")
         top.minsize(120, 1)
@@ -78,8 +64,8 @@ class Windows_11_Setup:
         self.Topic_ONE.configure(highlightcolor="black")
         self.Topic_ONE.configure(text='''Select language, architecture, edition''')
 
-        self.menubar = tk.Menu(top,font="TkMenuFont",bg=_bgcolor,fg=_fgcolor)
-        top.configure(menu = self.menubar)
+        self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
+        top.configure(menu=self.menubar)
 
         self.ms_label = tk.Label(top)
         self.ms_label.place(relx=0.048, rely=0.919, height=30, width=74)
@@ -120,12 +106,11 @@ class Windows_11_Setup:
         def go_to_third_page():
             top.destroy()
             third_page.vp_start_gui_third()
-        
+
         def go_to_fifth_page():
             top.destroy()
             fifth_page.vp_start_gui_fifth()
-            
-            
+
         self.exit_btn = tk.Button(top)
         self.exit_btn.place(relx=0.69, rely=0.9, height=34, width=77)
         self.exit_btn.configure(activebackground="#ececec")
@@ -171,7 +156,7 @@ class Windows_11_Setup:
         self.Label2.configure(font="-family {Source Sans Pro} -size 10")
         self.Label2.configure(foreground="#000000")
         self.Label2.configure(text='''Language''')
-        
+
         self.Label2_1 = tk.Label(top)
         self.Label2_1.place(relx=0.048, rely=0.311, height=21, width=74)
         self.Label2_1.configure(activebackground="#f9f9f9")
@@ -191,17 +176,16 @@ class Windows_11_Setup:
         self.Label2_1_1.configure(activeforeground="black")
         self.Label2_1_1.configure(anchor='w')
         self.Label2_1_1.configure(background="#ffffff")
-        self.Label2_1_1.configure(cursor="fleur")
         self.Label2_1_1.configure(disabledforeground="#a3a3a3")
         self.Label2_1_1.configure(font="-family {Source Sans Pro} -size 10")
         self.Label2_1_1.configure(foreground="#000000")
         self.Label2_1_1.configure(highlightbackground="#d9d9d9")
         self.Label2_1_1.configure(highlightcolor="black")
         self.Label2_1_1.configure(text='''Architecture''')
-        
+
         self.clicked_lang = tk.StringVar()
         self.clicked_lang.set("English (United States)")
-        
+
         self.options_language = [
             "English (United States)",
             "Spanish (Mexico)",
@@ -215,19 +199,17 @@ class Windows_11_Setup:
             "Azərbaycan",
             "euskara",
             "Filipino"
-            ]
-        
+        ]
+
         self.One = tk.OptionMenu(top, self.clicked_lang, *self.options_language)
         self.One.place(relx=0.209, rely=0.207, height=21, width=194)
         self.One.configure(background="#d9d9d9")
         self.One.configure(disabledforeground="#a3a3a3")
         self.One.configure(foreground="#000000")
-        # self.One.configure(text='''DropdownMenuOne will go here''')
-        
-        
+
         self.clicked_edition = tk.StringVar()
         self.clicked_edition.set("Windows 11 Pro")
-        
+
         self.options_edition = [
             "Windows 11 Home",
             "Windows 11 Pro",
@@ -248,16 +230,14 @@ class Windows_11_Setup:
         self.Two.configure(foreground="#000000")
         self.Two.configure(highlightbackground="#d9d9d9")
         self.Two.configure(highlightcolor="black")
-        # self.Two.configure(text='''DropdownMenuOne will go here''')
-        
-        
+
         self.clicked_architecture = tk.StringVar()
         self.clicked_architecture.set("64-bit (x64)")
-        
+
         self.options_architecture = [
-        "64-bit (x64)",
-        "32-bit (x86)",
-        "Windows on ARM"
+            "64-bit (x64)",
+            "32-bit (x86)",
+            "Windows on ARM"
         ]
 
         self.Three = tk.OptionMenu(top, self.clicked_architecture, *self.options_architecture)
@@ -269,11 +249,3 @@ class Windows_11_Setup:
         self.Three.configure(foreground="#000000")
         self.Three.configure(highlightbackground="#d9d9d9")
         self.Three.configure(highlightcolor="black")
-        # self.Three.configure(text='''DropdownMenuOne will go here''')
-
-# if __name__ == '__main__':
-#     vp_start_gui_fourth()
-
-
-
-

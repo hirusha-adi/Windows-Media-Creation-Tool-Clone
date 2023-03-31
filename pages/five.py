@@ -1,9 +1,11 @@
-
 import sys
-
+import time
 import tkinter as tk
 import tkinter.ttk as ttk
-py3 = True
+
+import pages.six as sixth_page
+import pages.four as fourth_page
+
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
@@ -11,58 +13,44 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
 
-def destroy_window():
-    # Function which closes the window.
-    global top_level
-    top_level.destroy()
-    top_level = None
-    
-import time
-import pages.four as fourth_page
-import pages.six as sixth_page
-
 
 def vp_start_gui_fifth():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
-    top = Windows_11_Setup (root)
+    top = Windows_11_Setup(root)
     init(root, top)
     root.mainloop()
 
+
 w = None
+
+
 def create_Windows_11_Setup(rt, *args, **kwargs):
     '''Starting point when module is imported by another module.
        Correct form of call: 'create_Windows_11_Setup(root, *args, **kwargs)' .'''
     global w, w_win, root
-    #rt = root
     root = rt
-    w = tk.Toplevel (root)
-    top = Windows_11_Setup (w)
+    w = tk.Toplevel(root)
+    top = Windows_11_Setup(w)
     init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_Windows_11_Setup():
-    global w
-    w.destroy()
-    w = None
 
 class Windows_11_Setup:
-    def __init__(self, top=None):
+    def __init__(self, top: tk.Tk = None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85'
-        _ana2color = '#ececec' # Closest X11 color: 'gray92'
+        _compcolor = '#d9d9d9'  # X11 color: 'gray85'
+        _ana2color = '#ececec'  # Closest X11 color: 'gray92'
         self.style = ttk.Style()
         if sys.platform == "win32":
             self.style.theme_use('winnative')
-        self.style.configure('.',background=_bgcolor)
-        self.style.configure('.',foreground=_fgcolor)
-        self.style.map('.',background=
-            [('selected', _compcolor), ('active',_ana2color)])
+        self.style.configure('.', background=_bgcolor)
+        self.style.configure('.', foreground=_fgcolor)
+        self.style.map('.', background=[('selected', _compcolor), ('active', _ana2color)])
 
         top.geometry("623x482+758+244")
         top.minsize(120, 1)
@@ -87,8 +75,8 @@ class Windows_11_Setup:
         self.Topic_ONE.configure(highlightcolor="black")
         self.Topic_ONE.configure(text='''Downloading''')
 
-        self.menubar = tk.Menu(top,font="TkMenuFont",bg=_bgcolor,fg=_fgcolor)
-        top.configure(menu = self.menubar)
+        self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
+        top.configure(menu=self.menubar)
 
         self.ms_label = tk.Label(top)
         self.ms_label.place(relx=0.048, rely=0.919, height=30, width=74)
@@ -184,7 +172,6 @@ class Windows_11_Setup:
         self.STOP.configure(activeforeground="#000000")
         self.STOP.configure(background="#e0e0e0")
         self.STOP.configure(borderwidth="0")
-        # self.STOP.configure(cursor="fleur")
         self.STOP.configure(disabledforeground="#a3a3a3")
         self.STOP.configure(foreground="#000000")
         self.STOP.configure(highlightbackground="#d9d9d9")
@@ -196,7 +183,6 @@ class Windows_11_Setup:
         def step():
             for x in range(5):
                 self.TProgressbar1['value'] += 20
-                # top.update_idletasks()
                 root.update_idletasks()
                 time.sleep(1)
 
@@ -206,7 +192,6 @@ class Windows_11_Setup:
         self.STOP_1.configure(activeforeground="#000000")
         self.STOP_1.configure(background="#e0e0e0")
         self.STOP_1.configure(borderwidth="0")
-        # self.STOP_1.configure(cursor="fleur")
         self.STOP_1.configure(disabledforeground="#a3a3a3")
         self.STOP_1.configure(foreground="#000000")
         self.STOP_1.configure(highlightbackground="#d9d9d9")
@@ -216,15 +201,6 @@ class Windows_11_Setup:
         self.STOP_1.configure(command=step)
 
         self.TProgressbar1 = ttk.Progressbar(top)
-        self.TProgressbar1.place(relx=0.096, rely=0.249, relwidth=0.819
-                , relheight=0.0, height=22)
+        self.TProgressbar1.place(relx=0.096, rely=0.249, relwidth=0.819, relheight=0.0, height=22)
         self.TProgressbar1.configure(length="510")
         self.TProgressbar1.configure(mode='determinate')
-
-# if __name__ == '__main__':
-#     vp_start_gui_fifth()
-
-
-
-
-

@@ -1,9 +1,11 @@
 
+import platform
 import sys
-
 import tkinter as tk
 import tkinter.ttk as ttk
-py3 = True
+
+import pages.three as third_page
+
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
@@ -11,55 +13,44 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
 
-def destroy_window():
-    # Function which closes the window.
-    global top_level
-    top_level.destroy()
-    top_level = None
-
-import pages.three as third_page
 
 def vp_start_gui_second():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
-    top = Windows_11_Setup (root)
+    top = Windows_11_Setup(root)
     init(root, top)
     root.mainloop()
 
+
 w = None
+
+
 def create_Windows_11_Setup(rt, *args, **kwargs):
     '''Starting point when module is imported by another module.
        Correct form of call: 'create_Windows_11_Setup(root, *args, **kwargs)' .'''
     global w, w_win, root
-    #rt = root
     root = rt
-    w = tk.Toplevel (root)
-    top = Windows_11_Setup (w)
+    w = tk.Toplevel(root)
+    top = Windows_11_Setup(w)
     init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_Windows_11_Setup():
-    global w
-    w.destroy()
-    w = None
 
 class Windows_11_Setup:
-    def __init__(self, top=None):
+    def __init__(self, top: tk.Tk = None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85'
-        _ana2color = '#ececec' # Closest X11 color: 'gray92'
+        _compcolor = '#d9d9d9'  # X11 color: 'gray85'
+        _ana2color = '#ececec'  # Closest X11 color: 'gray92'
         self.style = ttk.Style()
         if sys.platform == "win32":
             self.style.theme_use('winnative')
-        self.style.configure('.',background=_bgcolor)
-        self.style.configure('.',foreground=_fgcolor)
-        self.style.map('.',background=
-            [('selected', _compcolor), ('active',_ana2color)])
+        self.style.configure('.', background=_bgcolor)
+        self.style.configure('.', foreground=_fgcolor)
+        self.style.map('.', background=[('selected', _compcolor), ('active', _ana2color)])
 
         top.geometry("623x482+776+216")
         top.minsize(120, 1)
@@ -84,8 +75,8 @@ class Windows_11_Setup:
         self.Topic_ONE.configure(highlightcolor="black")
         self.Topic_ONE.configure(text='''Applicable notices and license terms''')
 
-        self.menubar = tk.Menu(top,font="TkMenuFont",bg=_bgcolor,fg=_fgcolor)
-        top.configure(menu = self.menubar)
+        self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
+        top.configure(menu=self.menubar)
 
         self.ms_label = tk.Label(top)
         self.ms_label.place(relx=0.048, rely=0.919, height=30, width=74)
@@ -122,7 +113,7 @@ class Windows_11_Setup:
         self.legal_label.configure(highlightbackground="#d9d9d9")
         self.legal_label.configure(highlightcolor="black")
         self.legal_label.configure(text='''Legal''')
-        
+
         def exit_program():
             exit()
 
@@ -172,8 +163,7 @@ class Windows_11_Setup:
         self.Topic1_subpart.configure(text='''Please read this so you know what you're agreeing to''')
 
         self.ScrolledTextArea = ScrolledText(top)
-        self.ScrolledTextArea.place(relx=0.048, rely=0.207, relheight=0.674
-                , relwidth=0.907)
+        self.ScrolledTextArea.place(relx=0.048, rely=0.207, relheight=0.674, relwidth=0.907)
         self.ScrolledTextArea.configure(background="white")
         self.ScrolledTextArea.configure(font="TkTextFont")
         self.ScrolledTextArea.configure(foreground="black")
@@ -380,8 +370,11 @@ d.      Limited rightsversions. If the software version you acquired is marked o
         self.ScrolledTextArea.insert('end', self.lisence_agreement_text)
         self.ScrolledTextArea.configure(state='disabled')
 # The following code is added to facilitate the Scrolled widgets you specified.
+
+
 class AutoScroll(object):
     '''Configure the scrollbars for a widget.'''
+
     def __init__(self, master):
         #  Rozen. Added the try-except clauses so that this class
         #  could be used for scrolled entry widget for which vertical
@@ -405,12 +398,7 @@ class AutoScroll(object):
         master.grid_columnconfigure(0, weight=1)
         master.grid_rowconfigure(0, weight=1)
         # Copy geometry methods of master  (taken from ScrolledText.py)
-        if py3:
-            methods = tk.Pack.__dict__.keys() | tk.Grid.__dict__.keys() \
-                  | tk.Place.__dict__.keys()
-        else:
-            methods = tk.Pack.__dict__.keys() + tk.Grid.__dict__.keys() \
-                  + tk.Place.__dict__.keys()
+        methods = tk.Pack.__dict__.keys() | tk.Grid.__dict__.keys() | tk.Place.__dict__.keys()
         for meth in methods:
             if meth[0] != '_' and meth not in ('config', 'configure'):
                 setattr(self, meth, getattr(master, meth))
@@ -430,6 +418,7 @@ class AutoScroll(object):
     def __str__(self):
         return str(self.master)
 
+
 def _create_container(func):
     '''Creates a ttk Frame with a given master, and use this new frame to
     place the scrollbars and the widget.'''
@@ -440,6 +429,7 @@ def _create_container(func):
         return func(cls, container, **kw)
     return wrapped
 
+
 class ScrolledText(AutoScroll, tk.Text):
     '''A standard Tkinter Text widget with scrollbars that will
     automatically show/hide as needed.'''
@@ -448,7 +438,7 @@ class ScrolledText(AutoScroll, tk.Text):
         tk.Text.__init__(self, master, **kw)
         AutoScroll.__init__(self, master)
 
-import platform
+
 def _bound_to_mousewheel(event, widget):
     child = widget.winfo_children()[0]
     if platform.system() == 'Windows' or platform.system() == 'Darwin':
@@ -460,6 +450,7 @@ def _bound_to_mousewheel(event, widget):
         child.bind_all('<Shift-Button-4>', lambda e: _on_shiftmouse(e, child))
         child.bind_all('<Shift-Button-5>', lambda e: _on_shiftmouse(e, child))
 
+
 def _unbound_to_mousewheel(event, widget):
     if platform.system() == 'Windows' or platform.system() == 'Darwin':
         widget.unbind_all('<MouseWheel>')
@@ -470,16 +461,18 @@ def _unbound_to_mousewheel(event, widget):
         widget.unbind_all('<Shift-Button-4>')
         widget.unbind_all('<Shift-Button-5>')
 
+
 def _on_mousewheel(event, widget):
     if platform.system() == 'Windows':
-        widget.yview_scroll(-1*int(event.delta/120),'units')
+        widget.yview_scroll(-1*int(event.delta/120), 'units')
     elif platform.system() == 'Darwin':
-        widget.yview_scroll(-1*int(event.delta),'units')
+        widget.yview_scroll(-1*int(event.delta), 'units')
     else:
         if event.num == 4:
             widget.yview_scroll(-1, 'units')
         elif event.num == 5:
             widget.yview_scroll(1, 'units')
+
 
 def _on_shiftmouse(event, widget):
     if platform.system() == 'Windows':
@@ -491,11 +484,3 @@ def _on_shiftmouse(event, widget):
             widget.xview_scroll(-1, 'units')
         elif event.num == 5:
             widget.xview_scroll(1, 'units')
-
-# if __name__ == '__main__':
-#     vp_start_gui_second()
-
-
-
-
-

@@ -1,9 +1,6 @@
 
-import sys
-
 import tkinter as tk
-import tkinter.ttk as ttk
-py3 = True
+
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
@@ -11,46 +8,37 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
 
-def destroy_window():
-    # Function which closes the window.
-    global top_level
-    top_level.destroy()
-    top_level = None
 
 def vp_start_gui_last():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
-    top = Windows_11_Setup (root)
+    top = Windows_11_Setup(root)
     init(root, top)
     root.mainloop()
 
+
 w = None
+
+
 def create_Windows_11_Setup(rt, *args, **kwargs):
     '''Starting point when module is imported by another module.
        Correct form of call: 'create_Windows_11_Setup(root, *args, **kwargs)' .'''
     global w, w_win, root
     #rt = root
     root = rt
-    w = tk.Toplevel (root)
-    top = Windows_11_Setup (w)
+    w = tk.Toplevel(root)
+    top = Windows_11_Setup(w)
     init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_Windows_11_Setup():
-    global w
-    w.destroy()
-    w = None
 
 class Windows_11_Setup:
-    def __init__(self, top=None):
+    def __init__(self, top: tk.Tk = None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85'
-        _ana2color = '#ececec' # Closest X11 color: 'gray92'
 
         top.geometry("623x482+765+208")
         top.minsize(120, 1)
@@ -75,8 +63,8 @@ class Windows_11_Setup:
         self.Topic_ONE.configure(highlightcolor="black")
         self.Topic_ONE.configure(text='''Ready to install''')
 
-        self.menubar = tk.Menu(top,font="TkMenuFont",bg=_bgcolor,fg=_fgcolor)
-        top.configure(menu = self.menubar)
+        self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
+        top.configure(menu=self.menubar)
 
         self.ms_label = tk.Label(top)
         self.ms_label.place(relx=0.048, rely=0.919, height=30, width=74)
@@ -161,7 +149,6 @@ class Windows_11_Setup:
         self.Label2.place(relx=0.048, rely=0.373, height=31, width=254)
         self.Label2.configure(anchor='w')
         self.Label2.configure(background="#ffffff")
-        self.Label2.configure(cursor="fleur")
         self.Label2.configure(disabledforeground="#a3a3a3")
         self.Label2.configure(font="-family {Source Sans Pro} -size 12 -weight bold")
         self.Label2.configure(foreground="#000000")
@@ -173,7 +160,6 @@ class Windows_11_Setup:
         self.Label2_1.configure(activeforeground="black")
         self.Label2_1.configure(anchor='w')
         self.Label2_1.configure(background="#ffffff")
-        self.Label2_1.configure(cursor="fleur")
         self.Label2_1.configure(disabledforeground="#a3a3a3")
         self.Label2_1.configure(font="-family {Source Sans Pro} -size 12 -weight bold")
         self.Label2_1.configure(foreground="#000000")
@@ -226,18 +212,9 @@ class Windows_11_Setup:
         self.Label1_2_1_1.configure(activeforeground="black")
         self.Label1_2_1_1.configure(anchor='w')
         self.Label1_2_1_1.configure(background="#ffffff")
-        self.Label1_2_1_1.configure(cursor="fleur")
         self.Label1_2_1_1.configure(disabledforeground="#a3a3a3")
         self.Label1_2_1_1.configure(font="-family {Source Sans Pro} -size 10 -weight bold")
         self.Label1_2_1_1.configure(foreground="#000000")
         self.Label1_2_1_1.configure(highlightbackground="#d9d9d9")
         self.Label1_2_1_1.configure(highlightcolor="black")
         self.Label1_2_1_1.configure(text='''START THE UPDATE AGAIN''')
-
-# if __name__ == '__main__':
-#     vp_start_gui_last()
-
-
-
-
-

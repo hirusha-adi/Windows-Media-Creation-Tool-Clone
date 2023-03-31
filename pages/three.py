@@ -1,13 +1,15 @@
-
-import sys
-
 import tkinter as tk
-import tkinter.ttk as ttk
+
+import pages.four as fourth_page
+import pages.two as second_page
+
 py3 = True
+
 
 def set_Tk_var():
     global selectedButton
     selectedButton = tk.IntVar()
+
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
@@ -15,51 +17,38 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
 
-def destroy_window():
-    # Function which closes the window.
-    global top_level
-    top_level.destroy()
-    top_level = None
-
-import pages.two as second_page
-import pages.four as fourth_page
 
 def vp_start_gui_third():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = tk.Tk()
     set_Tk_var()
-    top = Windows_11_Setup (root)
+    top = Windows_11_Setup(root)
     init(root, top)
     root.mainloop()
 
+
 w = None
+
+
 def create_Windows_11_Setup(rt, *args, **kwargs):
     '''Starting point when module is imported by another module.
        Correct form of call: 'create_Windows_11_Setup(root, *args, **kwargs)' .'''
     global w, w_win, root
-    #rt = root
     root = rt
-    w = tk.Toplevel (root)
+    w = tk.Toplevel(root)
     set_Tk_var()
-    top = Windows_11_Setup (w)
+    top = Windows_11_Setup(w)
     init(w, top, *args, **kwargs)
     return (w, top)
 
-def destroy_Windows_11_Setup():
-    global w
-    w.destroy()
-    w = None
 
 class Windows_11_Setup:
-    def __init__(self, top=None):
+    def __init__(self, top: tk.Tk = None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85'
-        _ana2color = '#ececec' # Closest X11 color: 'gray92'
 
         top.geometry("623x482+778+220")
         top.minsize(120, 1)
@@ -84,8 +73,8 @@ class Windows_11_Setup:
         self.Topic_ONE.configure(highlightcolor="black")
         self.Topic_ONE.configure(text='''Choose what to keep''')
 
-        self.menubar = tk.Menu(top,font="TkMenuFont",bg=_bgcolor,fg=_fgcolor)
-        top.configure(menu = self.menubar)
+        self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
+        top.configure(menu=self.menubar)
 
         self.ms_label = tk.Label(top)
         self.ms_label.place(relx=0.048, rely=0.919, height=30, width=74)
@@ -125,7 +114,7 @@ class Windows_11_Setup:
 
         def go_to_second_page():
             top.destroy()
-            second_page.vp_start_gui_second() 
+            second_page.vp_start_gui_second()
 
         self.exit_btn = tk.Button(top)
         self.exit_btn.place(relx=0.69, rely=0.9, height=34, width=77)
@@ -162,8 +151,7 @@ class Windows_11_Setup:
         selectedButton.set("3")
 
         self.Radiobutton1 = tk.Radiobutton(top)
-        self.Radiobutton1.place(relx=0.064, rely=0.145, relheight=0.052
-                , relwidth=0.43)
+        self.Radiobutton1.place(relx=0.064, rely=0.145, relheight=0.052, relwidth=0.43)
         self.Radiobutton1.configure(activebackground="#ececec")
         self.Radiobutton1.configure(activeforeground="#000000")
         self.Radiobutton1.configure(anchor='w')
@@ -179,8 +167,7 @@ class Windows_11_Setup:
         self.Radiobutton1.configure(value=1)
 
         self.Radiobutton1_1 = tk.Radiobutton(top)
-        self.Radiobutton1_1.place(relx=0.064, rely=0.29, relheight=0.052
-                , relwidth=0.43)
+        self.Radiobutton1_1.place(relx=0.064, rely=0.29, relheight=0.052, relwidth=0.43)
         self.Radiobutton1_1.configure(activebackground="#ececec")
         self.Radiobutton1_1.configure(activeforeground="#000000")
         self.Radiobutton1_1.configure(anchor='w')
@@ -196,8 +183,7 @@ class Windows_11_Setup:
         self.Radiobutton1_1.configure(value=2)
 
         self.Radiobutton1_1_1 = tk.Radiobutton(top)
-        self.Radiobutton1_1_1.place(relx=0.064, rely=0.436, relheight=0.052
-                , relwidth=0.43)
+        self.Radiobutton1_1_1.place(relx=0.064, rely=0.436, relheight=0.052, relwidth=0.43)
         self.Radiobutton1_1_1.configure(activebackground="#ececec")
         self.Radiobutton1_1_1.configure(activeforeground="#000000")
         self.Radiobutton1_1_1.configure(anchor='w')
@@ -253,11 +239,3 @@ class Windows_11_Setup:
         self.Label1_1_1.configure(highlightcolor="black")
         self.Label1_1_1.configure(justify='right')
         self.Label1_1_1.configure(text='''Everything will be deleted, including files, apps and settings.''')
-
-# if __name__ == '__main__':
-#     vp_start_gui_third()
-
-
-
-
-
